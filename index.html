@@ -346,6 +346,32 @@ h1, h2, h3, h4, h5 {
     color: var(--text-secondary);
     transition: background var(--transition), color var(--transition);
 }
+/* 防御性样式：部分轻量 WebView / HTML 查看器会把 a 强制 vertical-rl，
+   或把 ul 改成 block、li 改成 inline 但 a 又 writing-mode 竖排。
+   强制整个导航区域横向书写。 */
+.navbar .nav-links,
+.navbar .nav-links li,
+.navbar .nav-links a,
+.navbar .nav-logo,
+.navbar .nav-cta {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+}
+.navbar .nav-links {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+.navbar .nav-links li {
+    display: list-item !important;
+    float: none !important;
+}
+.navbar .nav-links a {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+}
 
 .nav-links a:hover {
     background: var(--bg-hover);
@@ -753,6 +779,13 @@ a.src-item:hover .src-name { color: var(--accent); }
     color: var(--text-secondary);
     font-size: .94rem;
 }
+.works-foot .works-note {
+    flex: 1 1 240px;
+    min-width: 0;
+    font-size: .82rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+}
 .works-foot .glass-btn svg {
     width: 16px;
     height: 16px;
@@ -1061,6 +1094,92 @@ a.src-item:hover .src-name { color: var(--accent); }
     font-size: 1.05rem;
     font-weight: 600;
     margin-bottom: 2px;
+}
+
+/* 原始成立者：限宽居中，避免两个人被拉伸占满整行 */
+.team-grid.founders {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 240px));
+    justify-content: center;
+}
+
+.team-member .member-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 11px;
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-soft);
+    border-radius: 999px;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* 深色底上 --accent 对比度不足，徽章文字改用亮紫，底与边保留强调色身份 */
+    .team-member .member-badge {
+        color: hsl(var(--hue), 85%, 84%);
+        background: hsla(var(--hue), 60%, 60%, .18);
+        border-color: hsla(var(--hue), 70%, 62%, .38);
+    }
+}
+
+.team-note {
+    margin-top: 28px;
+    padding: 20px 22px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.team-note p {
+    margin: 0;
+    flex: 1 1 300px;
+    min-width: 0;
+    color: var(--text-secondary);
+    font-size: .92rem;
+    line-height: 1.7;
+}
+.team-note b { color: var(--text-primary); }
+.team-note .glass-btn { flex-shrink: 0; }
+.team-note .glass-btn svg { width: 16px; height: 16px; }
+
+/* ===== 深度合作成员（外部协作，用虚线边框与正式成员区分） ===== */
+.partner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 240px));
+    gap: 24px;
+    justify-content: center;
+}
+.partner-card {
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    text-align: center;
+    padding: 28px 20px;
+}
+.partner-card h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 7px;
+}
+.partner-flag {
+    display: inline-block;
+    padding: 3px 11px;
+    font-size: .74rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+}
+@media (max-width: 720px) {
+    .team-note { flex-direction: column; align-items: stretch; }
+    .team-note .glass-btn { justify-content: center; }
 }
 
 /* ===== CTA ===== */
@@ -1913,6 +2032,7 @@ NAVIGATION — 常驻导航（hash 路由切换页面）
                 <li><a href="#/home" class="active">首页</a></li>
                 <li><a href="#/services">服务</a></li>
                 <li><a href="#/team">团队</a></li>
+                <li><a href="#/partners">合作</a></li>
                 <li><a href="#/contact">联系</a></li>
             </ul>
             <span class="nav-sep" aria-hidden="true"></span>
@@ -2098,8 +2218,8 @@ HERO
                     </ul>
                     <div class="work-foot">
                         <div class="work-stats">
-                            <span title="下载"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>16</span>
-                            <span title="查看"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>59</span>
+                            <span title="米坛社区下载量"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>16</span>
+                            <span title="米坛社区查看量"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>59</span>
                             <span title="发布">2026-08-27</span>
                         </div>
                         <a href="https://www.bandbbs.cn/resources/7793/" target="_blank" rel="noopener" class="work-link">查看详情 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
@@ -2120,8 +2240,8 @@ HERO
                     </ul>
                     <div class="work-foot">
                         <div class="work-stats">
-                            <span title="下载"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>10</span>
-                            <span title="查看"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>126</span>
+                            <span title="米坛社区下载量"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>10</span>
+                            <span title="米坛社区查看量"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>126</span>
                             <span title="发布">2026-08-24</span>
                         </div>
                         <a href="https://www.bandbbs.cn/resources/7735/" target="_blank" rel="noopener" class="work-link">查看详情 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
@@ -2150,6 +2270,7 @@ HERO
                     </a>
                 </div>
             </div>
+            <p class="works-note">作品卡片上的下载 / 查看为米坛社区单渠道数据，上方 250+ / 600+ 为三个渠道合计。</p>
             <a href="https://www.bandbbs.cn/resources/7793/" target="_blank" rel="noopener" class="glass-btn">
                 去米坛社区看看
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -3174,36 +3295,31 @@ PAGE — page-team
 ============================================================ -->
 <div class="page" id="page-team" data-route="/team">
 <!-- ============================================================
-TEAM — 工作室主要负责人
+TEAM — 工作室原始成立者
 ============================================================ -->
 <section class="section" id="team">
     <div class="container">
         <div class="section-header reveal">
-            <span class="tag">// 核心团队</span>
-            <h2>工作室主要负责人</h2>
-            <p>一群热爱 Vela 生态的开发者，致力于让智能穿戴更开放、更有趣。</p>
+            <span class="tag">// 原始成立者</span>
+            <h2>工作室原始成立者</h2>
+            <p>VT 工作室由下面两位从零搭起来。工作室后来的项目、工具与文档，都从这里开始。</p>
         </div>
-        <div class="team-grid">
+        <div class="team-grid founders">
             <div class="team-member reveal reveal-d1">
-                <div class="team-avatar av-1"></div>
-                <h4>IKUN_CXKPRO</h4>
-            </div>
-            <div class="team-member reveal reveal-d2">
-                <div class="team-avatar av-2"></div>
-                <h4>山荼_skat</h4>
-            </div>
-            <div class="team-member reveal reveal-d3">
                 <div class="team-avatar av-3"></div>
                 <h4>word</h4>
+                <span class="member-badge">原始股东</span>
             </div>
-            <div class="team-member reveal reveal-d4">
+            <div class="team-member reveal reveal-d2">
                 <div class="team-avatar av-4"></div>
                 <h4>木</h4>
             </div>
         </div>
+        <div class="team-note reveal">
+            <p>另有来自合作工作室的<b>深度合作成员</b>，以外部协作身份参与部分项目，不参与 VT 工作室内部事务。为避免归属被误读，已单开一页列清楚。</p>
+            <a href="#/partners" class="glass-btn">查看深度合作成员 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
     </div>
-
-<!-- 关于我们 -->
 </section>
 
 <section class="section section-alt" id="about">
@@ -3314,6 +3430,83 @@ TEAM — 工作室主要负责人
 </section>
 
 
+</div>
+
+<!-- ============================================================
+PAGE — page-partners
+============================================================ -->
+<div class="page" id="page-partners" data-route="/partners">
+<section class="section">
+    <div class="container">
+        <a href="#/team" class="detail-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="11 18 5 12 11 6"/></svg>返回团队</a>
+        <div class="detail-head">
+            <span class="tag">// 深度合作</span>
+            <h1>深度合作成员</h1>
+            <p class="detail-lead">以下两位<b>不是 VT 工作室的成员</b>。他们来自各自的合作工作室，以外部协作开发者的身份，与 VT 工作室在部分项目上长期配合。单列这一页，是为了把「谁属于 VT、谁属于合作方」讲清楚。</p>
+        </div>
+            <div class="detail-block">
+                <h2>成员名单</h2>
+                <p></p>
+                <div class="partner-grid">
+                    <div class="partner-card">
+                        <div class="team-avatar av-1"></div>
+                        <h4>IKUN_CXKPRO</h4>
+                        <span class="partner-flag">外部协作</span>
+                    </div>
+                    <div class="partner-card">
+                        <div class="team-avatar av-2"></div>
+                        <h4>山荼_skat</h4>
+                        <span class="partner-flag">外部协作</span>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-block">
+                <h2>合作关系怎么界定</h2>
+                <p>把边界写在前面，对双方都省事。</p>
+                <table class="spec-table">
+                    <tr><th>身份</th><td>外部协作开发者，组织与行政关系隶属各自所属工作室。</td></tr>
+                    <tr><th>参与范围</th><td>按单个项目单独约定，不参与 VT 工作室的内部管理与决策。</td></tr>
+                    <tr><th>成果归属</th><td>按项目单独约定；各自独立完成的作品，归属各自工作室。</td></tr>
+                    <tr><th>与 VT 的关系</th><td>合作方，非雇佣关系、非股东，不代表 VT 工作室对外作出承诺。</td></tr>
+                    <tr><th>作品署名</th><td>涉及协作的部分按实际贡献署名，与 VT 工作室在售应用相互独立统计。</td></tr>
+                </table>
+            </div>
+            <div class="detail-block">
+                <h2>为什么单独开一页</h2>
+                <p></p>
+                <div class="callout">之前这两位和 VT 工作室原始成立者列在同一页，很容易被读成「VT 工作室成员」。穿戴开发这个圈子不大，归属一旦含糊，作品署名和责任划分就都容易起争议。分开列、写清楚，是对合作方的尊重，也是对访客的交代。</div>
+            </div>
+            <div class="detail-block">
+                <h2>要找他们本人</h2>
+                <p></p>
+                <div class="callout">这两位的事务请直接联系其所属工作室，VT 工作室不代为承接或转达。要找 VT 工作室本身合作，请走下方联系方式。</div>
+            </div>
+    </div>
+            <div class="detail-block detail-related">
+                <h2>接着看</h2>
+                <div class="related-grid">
+                    <a href="#/team" class="related-card">
+                        <span class="rt">工作室原始成立者</span>
+                        <span class="rd">VT 工作室的两位原始成立者。</span>
+                        <span class="card-more">查看 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+                    <a href="#/model-joint" class="related-card">
+                        <span class="rt">联合开发</span>
+                        <span class="rd">外部协作一般怎么推进、怎么约定。</span>
+                        <span class="card-more">查看 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+                    <a href="#/contact" class="related-card">
+                        <span class="rt">联系方式</span>
+                        <span class="rd">直接对接 VT 工作室。</span>
+                        <span class="card-more">查看 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+                </div>
+            </div>
+            <div class="detail-cta">
+                <p>想和 VT 工作室合作？直接联系。</p>
+                <a href="#/contact" class="glass-btn glass-btn-primary">联系我们 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+            </div>
+</section>
 </div>
 
 <!-- ============================================================
@@ -3443,6 +3636,7 @@ FOOTER
                 <li><a href="#/home">首页</a></li>
                 <li><a href="#/services">服务</a></li>
                 <li><a href="#/team">团队</a></li>
+                <li><a href="#/partners">合作</a></li>
                 <li><a href="#/contact">联系</a></li>
             </ul>
             </div>
@@ -3587,6 +3781,7 @@ BACK TO TOP
             '/home': 'page-home',
             '/services': 'page-services',
             '/team': 'page-team',
+            '/partners': 'page-partners',
             '/contact': 'page-contact',
             '/svc-app': 'page-svc-app',
             '/svc-tools': 'page-svc-tools',
@@ -3602,6 +3797,7 @@ BACK TO TOP
         };
         /* 详情页归属：顶栏高亮跟随其主栏目 */
         const ROUTE_PARENT = {
+            '/partners': '/team',
             '/svc-app': '/services',
             '/svc-tools': '/services',
             '/svc-consult': '/services',
